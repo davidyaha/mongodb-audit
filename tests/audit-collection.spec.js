@@ -23,8 +23,9 @@ const journalerError = new Error('Failure');
 const failureJournaler = jest.fn(() => Promise.reject(journalerError));
 const createFailureJournaler = jest.fn(() => failureJournaler);
 
+jest.mock('fs');
 
-import { auditCollection, fileJournaler } from './index.js';
+import { auditCollection, fileJournaler } from '../src';
 
 const configuredProxyCollection = auditCollection({
   journaler: createSuccessJournaler,

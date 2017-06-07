@@ -1,4 +1,5 @@
 src
+tests
 coverage
 flow-typed
 .vscode

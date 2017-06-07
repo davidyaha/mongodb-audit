@@ -2,7 +2,7 @@
 
 jest.mock('fs');
 
-import { fileJournaler } from './file-journaler';
+import { fileJournaler } from '../src/journalers';
 import fs from 'fs';
 
 describe('fileJournaler', () => {

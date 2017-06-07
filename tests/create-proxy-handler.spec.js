@@ -1,6 +1,6 @@
 // @flow
 
-import { createProxyHandler } from './create-proxy-handler';
+import { createProxyHandler } from '../src/create-proxy-handler';
 
 const objectToProxy = {
   foo: jest.fn(),

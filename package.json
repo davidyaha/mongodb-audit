@@ -24,5 +24,11 @@
     "mongodb": "^2.2.27",
     "rimraf": "^2.6.1"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "jest": {
+    "testPathIgnorePatterns": [
+      "lib"
+    ],
+    "testEnvironment": "node"
+  }
 }

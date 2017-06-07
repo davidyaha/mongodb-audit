@@ -1,7 +1,5 @@
 // @flow
 
-jest.mock('fs');
-
 import { createProxyHandler } from './create-proxy-handler';
 import { fileJournaler } from './journalers';
 import { methods, methodToAction, methodToArgs, methodToResult } from './collection-selectors';

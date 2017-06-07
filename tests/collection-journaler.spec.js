@@ -1,6 +1,6 @@
 // @flow
 
-import { collectionJournaler } from './collection-journaler';
+import { collectionJournaler } from '../src/journalers';
 import type { Collection } from 'mongodb';
 
 const journalingCollection: Collection = {
