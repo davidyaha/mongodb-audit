@@ -1,7 +1,7 @@
 // @flow
 
-export { auditCollection } from './audit-collection'
-export { fileJournaler } from './journalers';
+export * from './audit-collection'
+export * from './journalers';
 
 export type Hook = (...args: any[]) => Promise<any>;
 
