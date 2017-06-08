@@ -1,5 +1,7 @@
 // @flow
 
+import { auditCollection, fileJournaler } from '../src';
+
 const updateResult = {
   matchedCount: 1,
   modifiedCount: 1,
@@ -14,8 +16,11 @@ const legacyResult = {
 const foundDoc = { field: 'cool doc' };
 const cursor = { fetch: () => Promise.resolve([foundDoc]) };
 
-const Collection = () => ({
-  collectionName: 'coll',
+const Collection = function () {
+  this.collectionName = 'coll';
+};
+
+Object.assign(Collection.prototype, {
   insertOne: jest.fn(doc => Promise.resolve({ ops: [doc] })),
   insertMany: jest.fn(docs => Promise.resolve({ ops: docs })),
   insert: jest.fn(docs => Promise.resolve({ ops: docs })),
@@ -36,8 +41,6 @@ const failureJournaler = jest.fn(() => Promise.reject(journalerError));
 const createFailureJournaler = jest.fn(() => failureJournaler);
 
 jest.mock('fs');
-
-import { auditCollection, fileJournaler } from '../src';
 
 const configuredProxyCollection = auditCollection({
   journaler: createSuccessJournaler,
