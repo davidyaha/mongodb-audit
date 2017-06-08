@@ -1,5 +1,6 @@
 // @flow
 
+import 'babel-polyfill';
 import { auditCollection, fileJournaler } from '../src';
 
 const updateResult = {
