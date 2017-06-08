@@ -5,16 +5,28 @@ const updateResult = {
   modifiedCount: 1,
 };
 
+const legacyResult = {
+  result: {
+    n: 1,
+  }
+};
+
+const foundDoc = { field: 'cool doc' };
+const cursor = { fetch: () => Promise.resolve([foundDoc]) };
+
 const Collection = () => ({
   collectionName: 'coll',
   insertOne: jest.fn(doc => Promise.resolve({ ops: [doc] })),
   insertMany: jest.fn(docs => Promise.resolve({ ops: docs })),
+  insert: jest.fn(docs => Promise.resolve({ ops: docs })),
   updateOne: jest.fn(() => Promise.resolve(updateResult)),
   updateMany: jest.fn(() => Promise.resolve(updateResult)),
+  update: jest.fn(() => Promise.resolve(legacyResult)),
   deleteOne: jest.fn(() => Promise.resolve({ deletedCount: 1 })),
   deleteMany: jest.fn(() => Promise.resolve({ deletedCount: 1 })),
-  find: jest.fn(),
-  findOne: jest.fn(),
+  remove: jest.fn(() => Promise.resolve(legacyResult)),
+  find: jest.fn(() => cursor),
+  findOne: jest.fn(() => Promise.resolve(foundDoc)),
 });
 
 const successJournaler = jest.fn(() => Promise.resolve());
@@ -98,6 +110,20 @@ describe('auditCollection', () => {
     expect(record).toHaveProperty('args', [[doc], undefined]);
   });
 
+  it('should record legacy insert', async () => {
+    const proxiedCollection = configuredProxyCollection(collection)();
+    const doc = { field: 'cool doc' };
+
+    await proxiedCollection.insert([doc]);
+    expect(collection.insert).toBeCalledWith([doc]);
+    expect(createSuccessJournaler).toBeCalledWith('coll');
+
+    const record = successJournaler.mock.calls[0][0];
+    expect(record).toHaveProperty('action', 'insert');
+    expect(record).toHaveProperty('result', [doc]);
+    expect(record).toHaveProperty('args', [[doc], undefined]);
+  });  
+
   it('should record updateOne using the given journaler', async () => {
     const proxiedCollection = configuredProxyCollection(collection)();
     const selector = { id: 1 };
@@ -120,6 +146,21 @@ describe('auditCollection', () => {
 
     await proxiedCollection.updateMany(selector, modifier);
     expect(collection.updateMany).toBeCalledWith(selector, modifier);
+    expect(createSuccessJournaler).toBeCalledWith('coll');
+
+    const record = successJournaler.mock.calls[0][0];
+    expect(record).toHaveProperty('action', 'update');
+    expect(record).toHaveProperty('result', updateResult);
+    expect(record).toHaveProperty('args', [selector, modifier, undefined]);
+  });
+
+  it('should record legacy update using the given journaler', async () => {
+    const proxiedCollection = configuredProxyCollection(collection)();
+    const selector = {};
+    const modifier = { $set: { field: 'not so cool doc' } };
+
+    await proxiedCollection.update(selector, modifier);
+    expect(collection.update).toBeCalledWith(selector, modifier);
     expect(createSuccessJournaler).toBeCalledWith('coll');
 
     const record = successJournaler.mock.calls[0][0];
@@ -156,8 +197,30 @@ describe('auditCollection', () => {
     expect(record).toHaveProperty('args', [selector, undefined]);
   });
 
+  it('should record legacy remove using the given journaler', async () => {
+    const proxiedCollection = configuredProxyCollection(collection)();
+    const selector = {};
+
+    await proxiedCollection.remove(selector);
+    expect(collection.remove).toBeCalledWith(selector);
+    expect(createSuccessJournaler).toBeCalledWith('coll');
+
+    const record = successJournaler.mock.calls[0][0];
+    expect(record).toHaveProperty('action', 'delete');
+    expect(record).toHaveProperty('result', { deletedCount: 1 });
+    expect(record).toHaveProperty('args', [selector, undefined]);
+  });  
+
+  it('should record find using the given journaler', async () => {
+    const proxiedCollection = configuredProxyCollection(collection)();
+    const selector = { _id: 1 };
+
+    const found = await proxiedCollection.find(selector).fetch();
+    expect(collection.find).toBeCalledWith(selector);
+  });
+
   it('should not halt on journaler error', async () => {
-    global.console = {warn: jest.fn()};
+    global.console = { warn: jest.fn() };
     const configuredProxyCollection = auditCollection({
       journaler: createFailureJournaler,
     });
@@ -171,10 +234,6 @@ describe('auditCollection', () => {
     expect(console.warn).toBeCalledWith('Errored while calling journaler', journalerError);
     expect(result).toHaveProperty('deletedCount', 1);
   });
-
-  it('should tell you insert is not supported and do nothing')
-  it('should tell you update is not supported and do nothing')
-  it('should tell you remove is not supported and do nothing')
 
   describe('compact', () => { });
   describe('purge', () => { });
