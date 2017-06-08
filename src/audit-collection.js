@@ -1,13 +1,12 @@
 // @flow
 
 import { createProxyHandler } from './create-proxy-handler';
+import { proxy } from './proxy';
 import { fileJournaler } from './journalers';
 import { methods, methodToAction, methodToArgs, methodToResult } from './collection-selectors';
 
 import type { Collection } from 'mongodb';
 import type { Journaler, AuditConfiguration } from './index';
-
-const proxy = (handler: Object) => (obj: Object) => new Proxy(obj, handler);
 
 const beforeHook = (context?: Object) =>
   (methodName: string, ...methodArgs: any[]) => Promise.resolve({

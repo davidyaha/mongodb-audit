@@ -4,7 +4,6 @@ import type { Hook } from './index';
 
 const defaultHook: Hook = () => Promise.resolve();
 
-
 export const createProxyHandler = (methods: string[]) =>
   (beforeHook: Hook = defaultHook) =>
     (afterHook: Hook = defaultHook) => ({

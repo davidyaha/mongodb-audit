@@ -1,4 +1,5 @@
 // @flow
+import 'babel-polyfill';
 
 import { createProxyHandler } from '../src/create-proxy-handler';
 

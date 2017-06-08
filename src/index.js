@@ -1,4 +1,5 @@
 // @flow
+import 'babel-polyfill';
 
 export * from './audit-collection'
 export * from './journalers';
