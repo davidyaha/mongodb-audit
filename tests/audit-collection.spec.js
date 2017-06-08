@@ -24,7 +24,7 @@ const Collection = function () {
 Object.assign(Collection.prototype, {
   insertOne: jest.fn(doc => Promise.resolve({ ops: [doc] })),
   insertMany: jest.fn(docs => Promise.resolve({ ops: docs })),
-  insert: jest.fn(docs => Promise.resolve({ ops: docs })),
+  insert: jest.fn((docs, cb) => cb ? cb(null, { ops: docs }) : Promise.resolve({ ops: docs })),
   updateOne: jest.fn(() => Promise.resolve(updateResult)),
   updateMany: jest.fn(() => Promise.resolve(updateResult)),
   update: jest.fn(() => Promise.resolve(legacyResult)),
@@ -126,6 +126,22 @@ describe('auditCollection', () => {
     expect(record).toHaveProperty('action', 'insert');
     expect(record).toHaveProperty('result', [doc]);
     expect(record).toHaveProperty('args', [[doc], undefined]);
+  });  
+  
+  it('should record legacy insert with callback', (done) => {
+    const proxiedCollection = configuredProxyCollection(collection)();
+    const doc = { field: 'cool doc' };
+
+    proxiedCollection.insert([doc], (err, res) => {
+      expect(collection.insert).toBeCalled();
+      expect(createSuccessJournaler).toBeCalledWith('coll');
+
+      const record = successJournaler.mock.calls[0][0];
+      expect(record).toHaveProperty('action', 'insert');
+      expect(record).toHaveProperty('result', [doc]);
+      expect(record).toHaveProperty('args', [[doc]]);
+      done();
+    });
   });  
 
   it('should record updateOne using the given journaler', async () => {
