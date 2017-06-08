@@ -26,6 +26,9 @@
     "rimraf": "^2.6.1"
   },
   "dependencies": {},
+  "peerDependencies": {
+    "babel-polyfill": "^6.23.0"
+  },
   "jest": {
     "testPathIgnorePatterns": [
       "lib"
