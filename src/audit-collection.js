@@ -13,7 +13,7 @@ const beforeHook = (context?: Object) =>
     context,
     time: Date.now(),
     action: methodToAction(methodName),
-    args: methodToArgs(methodName)(methodArgs),
+    args: JSON.stringify(methodToArgs(methodName)(methodArgs)),
   })
 
 const afterHook = (journaler: Journaler) =>

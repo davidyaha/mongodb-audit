@@ -81,7 +81,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'insert');
     expect(record).toHaveProperty('result', doc);
-    expect(record).toHaveProperty('args', [doc, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([doc, undefined]));
   });
 
   it('should allow addition of context to be recorded as well', async () => {
@@ -96,7 +96,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'insert');
     expect(record).toHaveProperty('result', doc);
-    expect(record).toHaveProperty('args', [doc, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([doc, undefined]));
     expect(record).toHaveProperty('context', { user });
   });
 
@@ -111,7 +111,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'insert');
     expect(record).toHaveProperty('result', [doc]);
-    expect(record).toHaveProperty('args', [[doc], undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([[doc], undefined]));
   });
 
   it('should record legacy insert', async () => {
@@ -125,7 +125,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'insert');
     expect(record).toHaveProperty('result', [doc]);
-    expect(record).toHaveProperty('args', [[doc], undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([[doc], undefined]));
   });  
   
   it('should record legacy insert with callback', (done) => {
@@ -139,7 +139,7 @@ describe('auditCollection', () => {
       const record = successJournaler.mock.calls[0][0];
       expect(record).toHaveProperty('action', 'insert');
       expect(record).toHaveProperty('result', [doc]);
-      expect(record).toHaveProperty('args', [[doc]]);
+      expect(record).toHaveProperty('args', JSON.stringify([[doc]]));
       done();
     });
   });  
@@ -156,7 +156,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'update');
     expect(record).toHaveProperty('result', updateResult);
-    expect(record).toHaveProperty('args', [selector, modifier, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([selector, modifier, undefined]));
   });
 
   it('should record updateMany using the given journaler', async () => {
@@ -171,7 +171,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'update');
     expect(record).toHaveProperty('result', updateResult);
-    expect(record).toHaveProperty('args', [selector, modifier, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([selector, modifier, undefined]));
   });
 
   it('should record legacy update using the given journaler', async () => {
@@ -186,7 +186,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'update');
     expect(record).toHaveProperty('result', updateResult);
-    expect(record).toHaveProperty('args', [selector, modifier, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([selector, modifier, undefined]));
   });
 
   it('should record deleteOne using the given journaler', async () => {
@@ -200,7 +200,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'delete');
     expect(record).toHaveProperty('result', { deletedCount: 1 });
-    expect(record).toHaveProperty('args', [selector, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([selector, undefined]));
   });
 
   it('should record deleteMany using the given journaler', async () => {
@@ -214,7 +214,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'delete');
     expect(record).toHaveProperty('result', { deletedCount: 1 });
-    expect(record).toHaveProperty('args', [selector, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([selector, undefined]));
   });
 
   it('should record legacy remove using the given journaler', async () => {
@@ -228,7 +228,7 @@ describe('auditCollection', () => {
     const record = successJournaler.mock.calls[0][0];
     expect(record).toHaveProperty('action', 'delete');
     expect(record).toHaveProperty('result', { deletedCount: 1 });
-    expect(record).toHaveProperty('args', [selector, undefined]);
+    expect(record).toHaveProperty('args', JSON.stringify([selector, undefined]));
   });  
 
   it('should record find using the given journaler', async () => {

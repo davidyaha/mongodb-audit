@@ -19,7 +19,7 @@ describe('collectionJournaler', () => {
     const success = await journaler(record);
 
     expect(success).toBe(true);
-    expect(journalingCollection.insertOne).toBeCalledWith({ collectionName: 'coll', record: JSON.stringify(record) });
+    expect(journalingCollection.insertOne).toBeCalledWith({ collectionName: 'coll', record });
   });
 
   it('should catch thrown errors if ocour and warn about it', async () => {
@@ -28,7 +28,7 @@ describe('collectionJournaler', () => {
     const record = { rec: 'Cool record' };
     const success = await journaler(record);
 
-    expect(failingCollection.insertOne).toBeCalledWith({ collectionName: 'coll', record: JSON.stringify(record) });
+    expect(failingCollection.insertOne).toBeCalledWith({ collectionName: 'coll', record });
     expect(success).toBe(false);
     expect(console.warn).toBeCalledWith('Could not insert to journaling collection coll due to error', error);
   });
